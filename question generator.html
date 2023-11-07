@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>question generator</title>
+    <style>
+        .output {
+         width: 509px;
+         height: 509px;
+         border: 1px solid black;
+        }
+        .container {
+  width: 40%;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #fff;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+}
+    </style>
+</head>
+<body>
+    <div>
+    <br><br><br></div>
+    <div class="container">
+    <input type="text" placeholder="question"><br>
+    <input type="text" placeholder="option1"><br>
+    <input type="text" placeholder="option2"><br>
+    <input type="text" placeholder="option3"><br>
+    <input type="text" placeholder="option4"><br>
+    <input type="number" value="answer"><br>
+    <button>view js</button>
+    <button id="copy">copy</button>
+    <div class="output"></div>
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+          const questionInput = document.querySelector('input[placeholder="question"]');
+          const optionInputs = document.querySelectorAll('input[placeholder^="option"]');
+          const answerInput = document.querySelector('input[type="number"]');
+          const outputDiv = document.querySelector('.output');
+          const copyButton = document.querySelector('#copy');
+          let codeStack = []; // Array to store the generated code for multiple questions
+      
+          // Function to remove comments from code
+          function removeComments(code) {
+            return code.replace(/\/\/.*/g, ''); // Remove single-line comments
+          }
+      
+          copyButton.addEventListener('click', function () {
+            // Join and copy the code without comments and <br> tags
+            const codeToCopy = codeStack.map(removeComments).join('\n').replace(/<br>/g, '');
+      
+            // Create a textarea element to hold the code
+            const codeTextArea = document.createElement('textarea');
+            codeTextArea.value = codeToCopy;
+      
+            // Append the textarea to the document
+            document.body.appendChild(codeTextArea);
+      
+            // Select the text within the textarea
+            codeTextArea.select();
+            document.execCommand('copy');
+      
+            // Remove the temporary textarea
+            document.body.removeChild(codeTextArea);
+          });
+      
+          const generateButton = document.querySelector('button');
+          generateButton.addEventListener('click', function () {
+            const question = questionInput.value;
+            const options = Array.from(optionInputs).map((input) => input.value);
+            const answer = parseInt(answerInput.value);
+      
+            if (question.trim() === '' || options.some((option) => option.trim() === '') || isNaN(answer) || answer < 1 || answer > options.length) {
+              outputDiv.innerText = 'Please fill in all fields correctly.';
+            } else {
+              const codeString = `
+      {
+        <br>
+      const question = "${question}?";
+      const options = [${options.map(option => `"${option}"`).join(', ')}];
+      const answer = ${answer};
+      <br>
+      }
+      `;
+      
+              // Add the code to the stack
+              codeStack.push(codeString);
+      
+              // Set the output to the entire stack without comments and <br> tags
+              outputDiv.innerHTML = codeStack.map(removeComments).join('\n');
+            }
+          });
+        });
+      </script>
+      
+      
+</body>
+</html>
+
+
+
+
+
+
+
+
+  
